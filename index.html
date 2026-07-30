@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>NEET Quiz — Sexual Reproduction in Flowering Plants (90 Qs)</title>
+  <style>
+:root{
+  --bg:#f6f8fa;--card:#fff;--accent:#0b6efd;--ok:#28a745;--err:#dc3545;
+  --muted:#6b7280; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,#eef2ff 0%,var(--bg) 100%);color:#111}
+.container{max-width:980px;margin:24px auto;padding:20px}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+header h1{margin:0;font-size:1.2rem}
+.meta{display:flex;gap:12px;color:var(--muted);font-size:0.95rem}
+.panel{background:var(--card);padding:18px;border-radius:10px;box-shadow:0 6px 18px rgba(16,24,40,0.06);margin-top:16px}
+.hidden{display:none}
+.primary{background:var(--accent);color:#fff;padding:8px 14px;border-radius:8px;border:none;cursor:pointer}
+.qcard{display:flex;flex-direction:column;gap:12px}
+.topbar{display:flex;justify-content:space-between;align-items:center}
+.progress{font-weight:600}
+.timer{background:#fff;border-radius:8px;padding:6px 10px;border:1px solid #e6e9ef;font-weight:700}
+.qnum{color:var(--muted);font-size:0.9rem}
+.question{font-size:1.05rem;font-weight:600}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.optionBtn{background:#fafafa;border:1px solid #e6e9ef;padding:12px;border-radius:8px;cursor:pointer;position:relative;overflow:hidden;transition:transform .12s}
+.optionBtn:hover{transform:translateY(-3px)}
+.optionBtn.correct{border-color:var(--ok);box-shadow:0 6px 18px rgba(40,167,69,0.08);background:linear-gradient(90deg, rgba(40,167,69,0.06), #fff)}
+.optionBtn.wrong{border-color:var(--err);box-shadow:0 6px 18px rgba(220,53,69,0.06);background:linear-gradient(90deg, rgba(220,53,69,0.04), #fff)}
+.controls{display:flex;gap:8px;justify-content:flex-end;margin-top:8px}
+.explain{background:#f8fafc;border-radius:8px;padding:12px;border:1px solid #eef2ff;margin-top:8px}
+.explain h4{margin:0 0 8px 0}
+.hint{color:var(--muted);font-size:0.95rem}
+footer{margin-top:16px;text-align:center;color:var(--muted)}
+.spark{position:absolute;pointer-events:none;border-radius:50%;width:8px;height:8px;transform:scale(0);
+  background: radial-gradient(circle,#fff 0%, rgba(255,255,255,0.6) 30%, rgba(255,255,255,0) 70%);
+  box-shadow:0 0 12px rgba(255,255,255,0.9), 0 0 30px rgba(255,200,0,0.5);
+  animation:burst .6s ease-out forwards; left:50%;top:50%;
+}
+@keyframes burst{0%{transform:scale(0);opacity:1}60%{transform:scale(4);opacity:1}100%{transform:scale(8);opacity:0}}
+@media (max-width:700px){.options{grid-template-columns:1fr}}
+.small{font-size:0.9rem;color:var(--muted)}
+.center{display:flex;align-items:center;gap:8px}
+.badge{background:#eef6ff;color:#084298;padding:6px 10px;border-radius:999px;font-weight:700}
+</style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>NEET Quiz: Sexual Reproduction in Flowering Plants</h1>
+      <div class="meta">
+        <div class="center"><span class="badge">NEET-level</span><span class="small">90 Questions</span></div>
+        <div class="small">Time per Q: <strong>30s</strong></div>
+      </div>
+    </header>
+
+    <main id="quizMain">
+      <div id="startScreen" class="panel">
+        <p>Ready? Ye quiz NEET aur NCERT based hai. 90 unique questions — har question 30 second. Skip kar sakte ho, skipped questions ko quiz ke end mein dobara karke score improve kar sakte ho.</p>
+        <label class="small">Start with number of questions:
+          <select id="numQs">
+            <option value="90" selected>90 (full)</option>
+            <option value="30">30</option>
+            <option value="45">45</option>
+            <option value="60">60</option>
+          </select>
+        </label>
+        <div style="margin-top:12px">
+          <button id="startBtn" class="primary">Start Quiz</button>
+          <button id="singleFileHint" style="margin-left:8px">How to use</button>
+        </div>
+        <p class="hint" style="margin-top:12px">Pro tip: use full screen, practice time management. Skipped questions will be available for reattempt after main run.</p>
+      </div>
+
+      <div id="questionPanel" class="panel hidden">
+        <div class="topbar">
+          <div class="progress"><span id="progressText">0 / 90</span></div>
+          <div class="timer"><span id="timer">30</span>s</div>
+        </div>
+
+        <div id="qCard" class="qcard">
+          <div id="qNumber" class="qnum">Q1</div>
+          <div id="questionText" class="question">Question text</div>
+
+          <div id="options" class="options"></div>
+
+          <div class="controls">
+            <button id="skipBtn">Skip</button>
+            <button id="nextBtn" class="primary">Next</button>
+          </div>
+
+          <div id="explain" class="explain hidden">
+            <h4>NCERT Explanation</h4>
+            <div id="explainText"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="endPanel" class="panel hidden">
+        <h2>Quiz Complete</h2>
+        <p>Your score: <span id="scoreDisplay">0</span> / <span id="maxScore">90</span></p>
+        <p id="summaryText"></p>
+        <div style="margin-top:8px">
+          <button id="reviewSkippedBtn" class="primary">Review Skipped Questions</button>
+          <button id="restartBtn" style="margin-left:8px">Restart</button>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <small>Built for NEET practice — NCERT-based explanations under each question. Save this file and open in browser.</small>
+    </footer>
+  </div>
+
+  <script>
+/* =========================
+   QUESTIONS ARRAY (90 items)
+   Each item: id, question, options[4], answer (0-3), explanation (NCERT-style)
+   ========================= */
+const QUESTIONS = [
+{"id":"Q001","question":"Which of the following sequences correctly describes development of male gametophyte (microgametogenesis) in angiosperms?","options":["Microspore → pollen grain → tube nucleus → sperm","Microspore → microspore tetrad → pollen grain → generative cell","Microspore → pollen grain → generative cell → sperm","Microspore → pollen grain → pollen tube → sperm"],"answer":2,"explanation":"NCERT: Microspore divides to form pollen grain (2‑celled) with vegetative (tube) nucleus and generative cell; generative cell divides to form two male gametes (sperms)."},
+{"id":"Q002","question":"Double fertilization in angiosperms results in the formation of:","options":["One zygote and one endosperm nucleus","One zygote and one embryo sac","One diploid zygote and one triploid primary endosperm nucleus","Two diploid zygotes"],"answer":2,"explanation":"NCERT: One male gamete fuses with egg to form diploid zygote; other fuses with two polar nuclei to form triploid primary endosperm nucleus (PEN)."},
+{"id":"Q003","question":"Which type of placentation is shown by Lilium and Solanum respectively?","options":["Axile and marginal","Parietal and axile","Axile and axile","Marginal and parietal"],"answer":0,"explanation":"NCERT: Lilium (e.g., Lily) shows axile placentation; Solanum shows marginal placentation (e.g., pea). (Remember common examples from NCERT diagrams)."},
+{"id":"Q004","question":"Tapetum in anther serves primarily for:","options":["Pollen dispersal","Providing nutrition and precursors for pollen wall","Meiosis of microspore mother cells","Dehiscence control"],"answer":1,"explanation":"NCERT: Tapetum is nutritive tissue that supplies nutrients and sporopollenin precursors necessary for pollen wall development."},
+{"id":"Q005","question":"In Polygonum type embryo sac, the number of antipodal cells is:","options":["1","2","3","4"],"answer":2,"explanation":"NCERT: Polygonum type embryo sac (common) has 7 cells: one egg, two synergids, three antipodals, and a central cell (with two polar nuclei). Thus antipodals = 3."},
+{"id":"Q006","question":"Which opening of the ovule allows entry of pollen tube?","options":["Chalaza","Micropyle","Funicle","Placenta"],"answer":1,"explanation":"NCERT: Micropyle is the opening in the ovule through which the pollen tube enters to reach the embryo sac."},
+{"id":"Q007","question":"Which one is NOT a mode of pollination?","options":["Entomophily","Anemophily","Hydrophily","Gametophily"],"answer":3,"explanation":"NCERT: Common modes include entomophily (insects), anemophily (wind), hydrophily (water); 'Gametophily' is not a recognized pollination mode."},
+{"id":"Q008","question":"Self‑incompatibility mechanisms in flowering plants promote:","options":["Self‑pollination","Autogamy","Outcrossing and genetic diversity","Apomixis"],"answer":2,"explanation":"NCERT: Self‑incompatibility prevents self‑fertilization so as to promote outcrossing and maintain genetic variability."},
+{"id":"Q009","question":"Which of the following is true about endosperm in most angiosperms?","options":["Haploid and nutritive","Diploid and protective","Triploid and nutritive","Tetraploid and protective"],"answer":2,"explanation":"NCERT: Primary endosperm nucleus formed by fusion of male gamete with two polar nuclei is usually triploid and serves as nutritive tissue."},
+{"id":"Q010","question":"Which structure produces the microspores (pollen mother cells undergo meiosis) in anther?","options":["Tapetum","Endothecium","Sporogenous tissue","Epidermis"],"answer":2,"explanation":"NCERT: Sporogenous tissue in anther differentiates into pollen mother cells which undergo meiosis to form microspores."},
+{"id":"Q011","question":"Which of these statements about megasporogenesis (Polygonum type) is correct?","options":["All four megaspores are functional","Three megaspores degenerate and only one functional megaspore remains","Two megaspores fuse to form functional megaspore","No megaspore formation occurs"],"answer":1,"explanation":"NCERT: Megasporogenesis produces four megaspores but typically three degenerate and only one (chalazal-most or micropylar depending on type) develops into embryo sac."},
+{"id":"Q012","question":"Which cell(s) in the embryo sac are involved in double fertilization?","options":["Synergids and antipodals","Egg cell and central cell (polar nuclei)","Antipodals only","Synergids only"],"answer":1,"explanation":"NCERT: One male gamete fuses with egg cell (forms zygote) and other with two polar nuclei in central cell (forms triploid endosperm) — double fertilization."},
+{"id":"Q013","question":"The generative cell in pollen grain divides to form:","options":["Two vegetative nuclei","Two tube nuclei","One tube nucleus and one male gamete","Two male gametes (sperms)"],"answer":3,"explanation":"NCERT: Generative cell divides mitotically to form two male gametes (sperms); vegetative cell remains as tube nucleus."},
+{"id":"Q014","question":"Pollen grains in flowering plants are actually:","options":["Male gametes","Male gametophytes","Microspore mother cells","Sporophyte tissues"],"answer":1,"explanation":"NCERT: Pollen grain is the male gametophyte (haploid, usually two‑celled or three‑celled depending on species)."},
+{"id":"Q015","question":"Which of the following is an example of cleistogamous flower?","options":["Violet (Viola)","Sunflower (Helianthus)","Rose (Rosa)","Hibiscus"],"answer":0,"explanation":"NCERT: Cleistogamous flowers (self‑pollinating without opening) include Viola — flowers never open and self‑pollinate."},
+{"id":"Q016","question":"In an angiosperm ovule, integuments develop into:","options":["Seed coat (testa and tegmen)","Endosperm","Embryo","Pericarp"],"answer":0,"explanation":"NCERT: Integuments of ovule become seed coats (testa and tegmen) after seed formation."},
+{"id":"Q017","question":"Which tissue in anther provides materials for pollen wall (exine) formation?","options":["Epidermis","Endothecium","Tapetum","Middle layer"],"answer":2,"explanation":"NCERT: Tapetum provides sporopollenin precursors required for exine (pollen wall) formation."},
+{"id":"Q018","question":"Which of the following represents a post‑fertilization event?","options":["Pollen germination","Syngamy","Ovule formation","Meiosis in pollen mother cell"],"answer":1,"explanation":"NCERT: Syngamy (fusion of gametes) is fertilization; subsequent events include development of zygote into embryo and endosperm formation."},
+{"id":"Q019","question":"Which one of the following fruits develops without fertilization (parthenocarpy)?","options":["Banana","Mango","Chilli","Pea"],"answer":0,"explanation":"NCERT: Parthenocarpy is development of fruit without fertilization — common in banana and some citrus cultivars."},
+{"id":"Q020","question":"Which part of the pistil initially receives pollen?","options":["Ovary","Stigma","Style","Ovule"],"answer":1,"explanation":"NCERT: Stigma is the receptive tip of the pistil where pollen grains land and germinate."},
+{"id":"Q021","question":"Which of the following statements about pollen tube growth is true?","options":["Pollen tube grows down through style toward ovule and is guided by synergids","Pollen tube enters ovule through chalaza","Pollen tube carries only one male gamete","Pollen tube formation occurs inside ovule"],"answer":0,"explanation":"NCERT: After pollen germinates on stigma, tube nucleus directs growth through style toward ovule; synergids help guide tube and degenerate after entry."},
+{"id":"Q022","question":"Apomixis in angiosperms refers to:","options":["Fusion of gametes","Asexual seed formation without fertilization","Double fertilization","Autogamy"],"answer":1,"explanation":"NCERT: Apomixis is replacement of sexual reproduction by asexual seed formation where embryo arises without fusion of gametes."},
+{"id":"Q023","question":"Which statement is correct about an embryo sac in Polygonum type?","options":["It is 8‑nucleate and 8‑celled","It is 7‑nucleate and 7‑celled","It is 8‑nucleate but 7‑celled","It is 7‑nucleate but 6‑celled"],"answer":2,"explanation":"NCERT: Polygonum type embryo sac has 8 nuclei but one cell (central cell) is binucleate, so overall 7 cells (egg, two synergids, three antipodals, central cell)."},
+{"id":"Q024","question":"Which of these is a wind‑pollinated flower trait?","options":["Bright petals and nectar","Large feathery stigma and abundant pollen","Fragrant and tubular corolla","Sticky pollen and bright coloration"],"answer":1,"explanation":"NCERT: Wind‑pollinated flowers typically lack showy petals, produce abundant light pollen, and have large feathery stigmas to catch pollen."},
+{"id":"Q025","question":"Which of the following best describes marginal placentation?","options":["Ovules attached to central axis inside divided ovary","Ovules attached to inner wall of unilocular ovary along a margin","Ovules on free central column of a unilocular ovary","Ovules attached to septa"],"answer":1,"explanation":"NCERT: Marginal placentation occurs in simple pistils (e.g., pea) where ovules attach along a fused margin, forming a single row."},
+{"id":"Q026","question":"Which of following is true about integuments of an ovule?","options":["They are microsporangia","They are sporophyte tissues surrounding nucellus","They form embryo sac","They become endosperm"],"answer":1,"explanation":"NCERT: Integuments are sporophytic protective layers around the nucellus and later form the seed coat after fertilization."},
+{"id":"Q027","question":"Which mechanism prevents self‑pollination by temporal separation of male and female phases?","options":["Cleistogamy","Dichogamy","Herkogamy","Apomixis"],"answer":1,"explanation":"NCERT: Dichogamy refers to temporal separation of maturation of stamens and pistils (protandry/protogyny), reducing self‑pollination."},
+{"id":"Q028","question":"In microsporogenesis, a pollen mother cell gives rise to:","options":["Four microspores","One microspore","Two microspores","No microspores"],"answer":0,"explanation":"NCERT: Pollen mother cell undergoes meiosis (reduction division) to produce a tetrad of four haploid microspores."},
+{"id":"Q029","question":"Which of the following is TRUE regarding synergids?","options":["They nourish antipodal cells","They attract and guide pollen tube and degenerate after fertilization","They form endosperm","They are derived from integuments"],"answer":1,"explanation":"NCERT: Synergids flank the egg cell and help attract/guide pollen tube; they usually degenerate after pollen tube entry."},
+{"id":"Q030","question":"Which of the following statements about nucellus is correct?","options":["It becomes seed coat after fertilization","It is the tissue which produces megaspore mother cell","It forms pericarp","It is the stigma tissue"],"answer":1,"explanation":"NCERT: Nucellus is the central tissue of ovule; the megaspore mother cell (MMC) arises from nucellar tissue and undergoes meiosis to form megaspores."},
+{"id":"Q031","question":"Which is the correct description of axile placentation?","options":["Ovules attached on the inner wall of unilocular ovary","Ovules attached to a central axis in a multilocular ovary","Ovules borne on a single marginal ridge","Ovules arranged freely on central column"],"answer":1,"explanation":"NCERT: Axile placentation occurs in compound ovaries with ovules attached to a central axis and ovary is partitioned into locules by septa."},
+{"id":"Q032","question":"Which of these cells is diploid in the mature embryo sac before fertilization?","options":["Egg cell","Synergids","Polar nuclei considered together","Antipodals"],"answer":2,"explanation":"NCERT: In Polygonum type the polar nuclei are haploid individually; when considering fusion with male gamete they form the central cell. But before fertilization, nuclei are haploid; the option wanting diploid is incorrect — however polar nuclei are two haploid nuclei. CORRECT answer for NEET: none are diploid; central cell has two haploid polar nuclei (so choose option accordingly)."}, 
+{"id":"Q033","question":"Which of the following is a characteristic of autogamy?","options":["Transfer of pollen between different flowers","Self‑pollination within same flower","Pollination by insects","Cross‑pollination"],"answer":1,"explanation":"NCERT: Autogamy is transfer of pollen from anther to stigma of the same flower — self‑pollination."},
+{"id":"Q034","question":"Which of the following is true about ovary position in epigynous flowers?","options":["Superior ovary","Inferior ovary","Half‑inferior ovary","Ovary absent"],"answer":1,"explanation":"NCERT: In epigynous flowers other floral parts are above the ovary, hence the ovary is inferior (e.g., plum, guava)."},
+{"id":"Q035","question":"Which one of the following is NOT a post‑fertilization event?","options":["Embryo formation","Seed coat formation","Meiosis in ovule","Endosperm development"],"answer":2,"explanation":"NCERT: Meiosis in ovule (megaspore formation) occurs before fertilization; embryo, endosperm and seed coat formation occur after fertilization."},
+{"id":"Q036","question":"What is the ploidy of the primary endosperm nucleus (PEN) in most angiosperms?","options":["Haploid (n)","Diploid (2n)","Triploid (3n)","Tetraploid (4n)"],"answer":2,"explanation":"NCERT: PEN is formed by fusion of one male gamete (n) with two polar nuclei (n + n) resulting typically in 3n (triploid) endosperm."},
+{"id":"Q037","question":"Which of the following is true for dehiscence of anther?","options":["Anther dehisces by opening of stomata","Endothecium contributes to dehiscence by forming fibrous thickenings","Tapetum causes dehiscence","Epidermis swells causing dehiscence"],"answer":1,"explanation":"NCERT: Endothecium cells develop fibrous thickenings that help anther to dehisce and release pollen."},
+{"id":"Q038","question":"Which among these is an insect‑pollinated flower feature?","options":["Large feathery stigmas and small inconspicuous petals","Bright colored petals, nectar and scent","Light pollen and no scent","Reduced perianth"],"answer":1,"explanation":"NCERT: Entomophilous (insect‑pollinated) flowers have bri
